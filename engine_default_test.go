@@ -3,7 +3,7 @@ package ecs_test
 import (
 	"testing"
 
-	"github.com/andygeiss/ecs"
+	"github.com/bolom009/ecs"
 )
 
 func prepare() (e ecs.Engine, sys *mockupSystem) {

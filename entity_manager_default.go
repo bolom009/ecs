@@ -1,12 +1,16 @@
 package ecs
 
 type defaultEntityManager struct {
-	entities []*Entity
+	entities    []*Entity
+	mapEntities map[string]*Entity
 }
 
 // Add entries to the manager.
 func (m *defaultEntityManager) Add(entities ...*Entity) {
 	m.entities = append(m.entities, entities...)
+	for _, entity := range entities {
+		m.mapEntities[entity.Id] = entity
+	}
 }
 
 // Entities returns all the entities.
@@ -63,13 +67,12 @@ func (m *defaultEntityManager) FilterByNames(names ...string) (entities []*Entit
 }
 
 // Get a specific entity by Id.
-func (m *defaultEntityManager) Get(id string) (entity *Entity) {
-	for _, e := range m.entities {
-		if e.Id == id {
-			return e
-		}
+func (m *defaultEntityManager) Get(id string) *Entity {
+	if v, ok := m.mapEntities[id]; ok {
+		return v
 	}
-	return
+
+	return nil
 }
 
 // Remove a specific entity.
@@ -79,6 +82,7 @@ func (m *defaultEntityManager) Remove(entity *Entity) {
 			copy(m.entities[i:], m.entities[i+1:])
 			m.entities[len(m.entities)-1] = nil
 			m.entities = m.entities[:len(m.entities)-1]
+			delete(m.mapEntities, e.Id)
 			break
 		}
 	}
@@ -87,6 +91,7 @@ func (m *defaultEntityManager) Remove(entity *Entity) {
 // NewEntityManager creates a new defaultEntityManager and returns its address.
 func NewEntityManager() *defaultEntityManager {
 	return &defaultEntityManager{
-		entities: []*Entity{},
+		entities:    []*Entity{},
+		mapEntities: make(map[string]*Entity),
 	}
 }

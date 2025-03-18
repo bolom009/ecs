@@ -3,7 +3,7 @@ package ecs_test
 import (
 	"testing"
 
-	"github.com/andygeiss/ecs"
+	"github.com/bolom009/ecs"
 )
 
 func TestEntity_NewEntity_Should_Create_A_Correct_Mask(t *testing.T) {

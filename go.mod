@@ -1,3 +1,3 @@
-module github.com/andygeiss/ecs
+module github.com/bolom009/ecs
 
-go 1.22.5
+go 1.24

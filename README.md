@@ -1,15 +1,15 @@
 <p align="center">
-<img src="https://github.com/andygeiss/ecs/blob/master/logo.png?raw=true" />
+<img src="https://github.com/bolom009/ecs/blob/master/logo.png?raw=true" />
 </p>
 
 # ECS - Entity Component System
 
-[![License](https://img.shields.io/github/license/andygeiss/ecs)](https://github.com/andygeiss/ecs/blob/master/LICENSE)
-[![Releases](https://img.shields.io/github/v/release/andygeiss/ecs)](https://github.com/andygeiss/ecs/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/andygeiss/ecs)](https://goreportcard.com/report/github.com/andygeiss/ecs)
-[![Codacy Grade Badge](https://app.codacy.com/project/badge/Grade/b4f4c9b35f4b46d8bf19f73379864b45)](https://app.codacy.com/gh/andygeiss/ecs/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Codacy Coverage Badge](https://app.codacy.com/project/badge/Coverage/b4f4c9b35f4b46d8bf19f73379864b45)](https://app.codacy.com/gh/andygeiss/ecs/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5a2fd230f2eae6f244f2/maintainability)](https://codeclimate.com/github/andygeiss/ecs/maintainability)
+[![License](https://img.shields.io/github/license/bolom009/ecs)](https://github.com/bolom009/ecs/blob/master/LICENSE)
+[![Releases](https://img.shields.io/github/v/release/bolom009/ecs)](https://github.com/bolom009/ecs/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bolom009/ecs)](https://goreportcard.com/report/github.com/bolom009/ecs)
+[![Codacy Grade Badge](https://app.codacy.com/project/badge/Grade/b4f4c9b35f4b46d8bf19f73379864b45)](https://app.codacy.com/gh/bolom009/ecs/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Coverage Badge](https://app.codacy.com/project/badge/Coverage/b4f4c9b35f4b46d8bf19f73379864b45)](https://app.codacy.com/gh/bolom009/ecs/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5a2fd230f2eae6f244f2/maintainability)](https://codeclimate.com/github/bolom009/ecs/maintainability)
 
 Build your own Game-Engine based on the Entity Component System concept in Golang.
 
@@ -43,7 +43,7 @@ Next we create a `main.go` with the following content:
 package main
 
 import (
-    "github.com/andygeiss/ecs"
+    "github.com/bolom009/ecs"
 )
 
 func main() {
@@ -62,14 +62,14 @@ able to react to user input.
 ### The movement system
 
 A system needs to implement the methods defined by the interface
-[System](https://github.com/andygeiss/ecs/blob/master/core/system.go).
+[System](https://github.com/bolom009/ecs/blob/master/core/system.go).
 So we create a new file locally at `systems/movement.go`:
 
 ```go
 package systems
 
 import (
-    "github.com/andygeiss/ecs"
+    "github.com/bolom009/ecs"
 )
 
 type movementSystem struct{}
@@ -107,7 +107,7 @@ these components. Entities are simply a composition of components that provide
 a scalable data-oriented architecture.
 
 A component needs to implement the methods defined by the interface
-[Component](https://github.com/andygeiss/ecs/blob/master/core/component.go).
+[Component](https://github.com/bolom009/ecs/blob/master/core/component.go).
 Let's define our `Player` components by first creating a mask at
 `components/components.go`:
 

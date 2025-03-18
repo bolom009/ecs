@@ -3,7 +3,7 @@ package ecs_test
 import (
 	"testing"
 
-	"github.com/andygeiss/ecs"
+	"github.com/bolom009/ecs"
 )
 
 func TestSystemManager_Systems_Should_Have_No_System_At_Start(t *testing.T) {

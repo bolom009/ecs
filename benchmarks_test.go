@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/andygeiss/ecs"
+	"github.com/bolom009/ecs"
 )
 
 func BenchmarkEntityManager_Get_With_1_Entity_Id_Found(b *testing.B) {
@@ -23,6 +23,22 @@ func BenchmarkEntityManager_Get_With_1000_Entities_Id_Not_Found(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		m.Get("1000")
+	}
+}
+
+// BenchmarkEntityManager_Get_With_1000_Entities_Id-16    	168744212	         7.069 ns/op
+func BenchmarkEntityManager_Get_With_1000_Entities_Id(b *testing.B) {
+	m := ecs.NewEntityManager()
+	for i := 0; i < 1000; i++ {
+		m.Add(ecs.NewEntity("3d78b074-dae6-419c-be63-6565375e3eba", nil))
+	}
+	searchID := "a11efca1-e420-4869-a424-95539ce1dad7"
+	m.Add(ecs.NewEntity(searchID, nil))
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		m.Get(searchID)
 	}
 }
 
