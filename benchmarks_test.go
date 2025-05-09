@@ -11,7 +11,7 @@ import (
 func BenchmarkEntityManager_Get_With_1_Entity_Id_Found(b *testing.B) {
 	m := ecs.NewEntityManager()
 	m.Add(ecs.NewEntity("foo", nil))
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		m.Get("foo")
 	}
 }
@@ -21,7 +21,7 @@ func BenchmarkEntityManager_Get_With_1000_Entities_Id_Not_Found(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		m.Add(ecs.NewEntity("foo", nil))
 	}
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		m.Get("1000")
 	}
 }
@@ -37,7 +37,7 @@ func BenchmarkEntityManager_Get_With_1000_Entities_Id(b *testing.B) {
 
 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		m.Get(searchID)
 	}
 }
@@ -51,22 +51,40 @@ func BenchmarkEntityManager_FilterByMask_With_1000_Entities(b *testing.B) {
 			&mockComponent{name: "velocity", mask: 3},
 		}))
 	}
-	for i := 0; i < b.N; i++ {
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for b.Loop() {
 		m.FilterByMask(1 | 2 | 3)
 	}
 }
 
-func BenchmarkEntityManager_FilterByNames_With_1000_Entities(b *testing.B) {
-	m := ecs.NewEntityManager()
-	for i := 0; i < 1000; i++ {
-		m.Add(ecs.NewEntity(fmt.Sprintf("%d", i), []ecs.Component{
-			&mockComponent{name: "position", mask: 1},
-			&mockComponent{name: "size", mask: 2},
-			&mockComponent{name: "velocity", mask: 3},
-		}))
+func BenchmarkEntity_Get_Should_Return_Component(b *testing.B) {
+	entity := ecs.NewEntity("e", generateComponents([]string{
+		"position", "rotation", "scale", "material", "security",
+		"damage", "agent", "rvo", "move_speed", "aggro", "attack_speed",
+		"attack_range", "network_identity", "team", "health", "mana",
+		"death_timer", "texture", "melee", "state", "target", "velocity",
+		"effects", "pathfinding", "flocking", "follow",
+	}))
+
+	for b.Loop() {
+		_ = entity.Get(100)
 	}
-	for i := 0; i < b.N; i++ {
-		m.FilterByNames("position", "size", "velocity")
+}
+
+func BenchmarkEntity_Get_Should_Remove_Component(b *testing.B) {
+	entity := ecs.NewEntity("e", generateComponents([]string{
+		"position", "rotation", "scale", "material", "security",
+		"damage", "agent", "rvo", "move_speed", "aggro", "attack_speed",
+		"attack_range", "network_identity", "team", "health", "mana",
+		"death_timer", "texture", "melee", "state", "target", "velocity",
+		"effects", "pathfinding", "flocking", "follow",
+	}))
+
+	for b.Loop() {
+		entity.Remove(100)
 	}
 }
 
@@ -84,7 +102,7 @@ func BenchmarkEngine_Run(b *testing.B) {
 				engine := ecs.NewDefaultEngine(em, sm)
 				engine.Setup()
 				defer engine.Teardown()
-				for i := 0; i < b.N; i++ {
+				for b.Loop() {
 					engine.Run()
 				}
 			})
@@ -99,6 +117,19 @@ func BenchmarkEngine_Run(b *testing.B) {
 | |_| | |_| | \__ \
  \__,_|\__|_|_|___/
 */
+
+func generateComponents(entries []string) []ecs.Component {
+	components := make([]ecs.Component, len(entries))
+	for i, entry := range entries {
+		components[i] = &mockComponent{
+			name:  entry,
+			mask:  uint64(i + 1),
+			value: fmt.Sprintf("%s-%d", entry, i+1),
+		}
+	}
+
+	return components
+}
 
 func generateEntities(count int) []*ecs.Entity {
 	out := make([]*ecs.Entity, count)

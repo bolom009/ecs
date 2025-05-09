@@ -1,6 +1,7 @@
 package ecs_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/bolom009/ecs"
@@ -46,6 +47,27 @@ func TestEntity_Get_Should_Return_Component(t *testing.T) {
 	}
 }
 
+func BenchmarkEntity_GetMany_Should_Return_Component(b *testing.B) {
+	list := make([]ecs.Component, 50)
+	for i := range list {
+		inc := 1 << (i & 63)
+		list[i] = &mockComponent{
+			name: fmt.Sprintf("position%v", i),
+			mask: uint64(inc),
+		}
+	}
+
+	entity := ecs.NewEntity("e", list)
+	mask := uint64(1 << (len(list) - 1&63))
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for b.Loop() {
+		_ = entity.Get(mask)
+	}
+}
+
 func TestEntity_Remove_Should_Work_With_Multiple_Components(t *testing.T) {
 	entity := ecs.NewEntity("e", []ecs.Component{
 		&mockComponent{name: "position", mask: 1},
@@ -67,8 +89,9 @@ func TestEntity_Remove_Should_Work_With_Multiple_Components(t *testing.T) {
 */
 
 type mockComponent struct {
-	mask uint64
-	name string
+	mask  uint64
+	name  string
+	value interface{}
 }
 
 func (c *mockComponent) Mask() uint64 { return c.mask }

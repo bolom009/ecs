@@ -8,8 +8,6 @@ type EntityManager interface {
 	Entities() (entities []*Entity)
 	// FilterByMask returns the mapped entities, which Components mask matched.
 	FilterByMask(mask uint64) (entities []*Entity)
-	// FilterByNames returns the mapped entities, which Components names matched.
-	FilterByNames(names ...string) (entities []*Entity)
 	// Get a specific entity by Id.
 	Get(id string) (entity *Entity)
 	// Remove a specific entity.

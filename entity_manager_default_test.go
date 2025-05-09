@@ -144,33 +144,37 @@ func TestEntityManager_FilterByMask_Should_Return_Three_Entities_Out_Of_Three(t 
 	}
 }
 
-func TestEntityManager_FilterByNames_Should_Return_Three_Entities_Out_Of_Three(t *testing.T) {
+func TestEntityManager_FilterByMask(t *testing.T) {
+	const (
+		MaskPosition = uint64(1 << iota)
+		MaskRotation
+		MaskSize
+		MaskScale
+		MaskVelocity
+		MaskAgent
+	)
+
 	em := ecs.NewEntityManager()
 	e1 := ecs.NewEntity("e1", []ecs.Component{
-		&mockComponent{name: "position", mask: 1},
-		&mockComponent{name: "size", mask: 2},
+		&mockComponent{name: "position", mask: MaskPosition},
+		&mockComponent{name: "size", mask: MaskSize},
+		&mockComponent{name: "rotation", mask: MaskRotation},
 	})
 	e2 := ecs.NewEntity("e2", []ecs.Component{
-		&mockComponent{name: "position", mask: 1},
-		&mockComponent{name: "size", mask: 2},
+		&mockComponent{name: "position", mask: MaskPosition},
+		&mockComponent{name: "size", mask: MaskSize},
 	})
 	e3 := ecs.NewEntity("e3", []ecs.Component{
-		&mockComponent{name: "position", mask: 1},
-		&mockComponent{name: "size", mask: 2},
+		&mockComponent{name: "position", mask: MaskPosition},
+		&mockComponent{name: "size", mask: MaskSize},
 	})
+
 	em.Add(e1, e2, e3)
-	filtered := em.FilterByNames("position", "size")
+	e1.Remove(MaskRotation)
+
+	filtered := em.FilterByMask(MaskPosition)
 	if len(filtered) != 3 {
 		t.Errorf("EntityManager should return three entities, but got %d", len(filtered))
-	}
-	if filtered[0].Id != "e1" {
-		t.Errorf("Entity should have correct Id, but got %s", filtered[0].Id)
-	}
-	if filtered[1].Id != "e2" {
-		t.Errorf("Entity should have correct Id, but got %s", filtered[1].Id)
-	}
-	if filtered[2].Id != "e3" {
-		t.Errorf("Entity should have correct Id, but got %s", filtered[2].Id)
 	}
 }
 

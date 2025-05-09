@@ -37,35 +37,6 @@ func (m *defaultEntityManager) FilterByMask(mask uint64) (entities []*Entity) {
 	return entities[:index]
 }
 
-// FilterByNames returns the mapped entities, which Components names matched.
-func (m *defaultEntityManager) FilterByNames(names ...string) (entities []*Entity) {
-	// Allocate the worst-case amount of memory (all entities needed).
-	entities = make([]*Entity, len(m.entities))
-	index := 0
-	for _, e := range m.entities {
-		// Each component should match
-		matched := 0
-		for _, name := range names {
-			for _, c := range e.Components {
-				switch v := c.(type) {
-				case ComponentWithName:
-					if v.Name() == name {
-						matched++
-					}
-				}
-			}
-		}
-		// Add the entity to the filter list, if all Components are found.
-		if matched == len(names) {
-			// Direct access
-			entities[index] = e
-			index++
-		}
-	}
-	// Return only the needed slice.
-	return entities[:index]
-}
-
 // Get a specific entity by Id.
 func (m *defaultEntityManager) Get(id string) *Entity {
 	if v, ok := m.mapEntities[id]; ok {
