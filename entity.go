@@ -1,12 +1,16 @@
 package ecs
 
-import "sync/atomic"
+import (
+	"sync/atomic"
+
+	"github.com/bolom009/ecs/intmap"
+)
 
 var idCounter atomic.Uint64
 
 // Entity is simply a composition of one or more Components with an Id.
 type Entity struct {
-	Components map[uint64]Component
+	Components *intmap.Map[uint64, Component]
 	Id         uint32 `json:"id"`
 	Masked     uint64 `json:"masked"`
 }
@@ -19,14 +23,14 @@ func (e *Entity) Add(cn ...Component) {
 			continue
 		}
 
-		e.Components[c.Mask()] = c
+		e.Components.Put(c.Mask(), c)
 		e.Masked = e.Masked | cMask
 	}
 }
 
 // Get a component by its bitmask.
 func (e *Entity) Get(mask uint64) Component {
-	c, ok := e.Components[mask]
+	c, ok := e.Components.Get(mask)
 	if ok {
 		return c
 	}
@@ -41,38 +45,24 @@ func (e *Entity) Mask() uint64 {
 
 // Remove a component by using its maskSlice.
 func (e *Entity) Remove(mask uint64) {
-	c, ok := e.Components[mask]
+	c, ok := e.Components.Get(mask)
 	if ok {
-		delete(e.Components, mask)
 		e.Masked = e.Masked &^ c.Mask()
+		e.Components.Del(mask)
 	}
-
-	//modified := false
-	//for i, c := range e.Components {
-	//	if c.Mask() == mask {
-	//		copy(e.Components[i:], e.Components[i+1:])
-	//		e.Components[len(e.Components)-1] = nil
-	//		e.Components = e.Components[:len(e.Components)-1]
-	//		e.Masked = e.Masked &^ c.Mask()
-	//		break
-	//	}
-	//}
-	//if modified {
-	//	e.Masked = maskSlice(e.Components)
-	//}
 }
 
 // NewEntity creates a new entity and pre-calculates the component maskSlice.
 func NewEntity(components []Component) *Entity {
 	eId := newId()
 	e := &Entity{
-		Components: make(map[uint64]Component),
+		Components: intmap.New[uint64, Component](100),
 		Id:         eId,
 		Masked:     maskSlice(components),
 	}
 
 	for _, c := range components {
-		e.Components[c.Mask()] = c
+		e.Components.Put(c.Mask(), c)
 	}
 
 	return e

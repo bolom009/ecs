@@ -1,15 +1,17 @@
 package ecs
 
+import "github.com/bolom009/ecs/intmap"
+
 type defaultEntityManager struct {
 	entities    []*Entity
-	mapEntities map[uint32]*Entity
+	mapEntities *intmap.Map[uint32, *Entity]
 }
 
 // NewEntityManager creates a new defaultEntityManager and returns its address.
 func NewEntityManager() *defaultEntityManager {
 	return &defaultEntityManager{
 		entities:    make([]*Entity, 0),
-		mapEntities: make(map[uint32]*Entity),
+		mapEntities: intmap.New[uint32, *Entity](100),
 	}
 }
 
@@ -17,7 +19,7 @@ func NewEntityManager() *defaultEntityManager {
 func (m *defaultEntityManager) Add(entities ...*Entity) {
 	m.entities = append(m.entities, entities...)
 	for _, entity := range entities {
-		m.mapEntities[entity.Id] = entity
+		m.mapEntities.Put(entity.Id, entity)
 	}
 }
 
@@ -47,7 +49,7 @@ func (m *defaultEntityManager) FilterByMask(mask uint64) (entities []*Entity) {
 
 // Get a specific entity by Id.
 func (m *defaultEntityManager) Get(id uint32) *Entity {
-	if v, ok := m.mapEntities[id]; ok {
+	if v, ok := m.mapEntities.Get(id); ok {
 		return v
 	}
 
@@ -61,7 +63,7 @@ func (m *defaultEntityManager) Remove(entity *Entity) {
 			copy(m.entities[i:], m.entities[i+1:])
 			m.entities[len(m.entities)-1] = nil
 			m.entities = m.entities[:len(m.entities)-1]
-			delete(m.mapEntities, e.Id)
+			m.mapEntities.Del(e.Id)
 			break
 		}
 	}

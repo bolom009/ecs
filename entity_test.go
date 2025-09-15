@@ -32,8 +32,8 @@ func TestEntity_Add_Should_Not_Add_Existing_Component(t *testing.T) {
 		&mockComponent{name: "velocity", mask: 2},
 	})
 	entity.Add(&mockComponent{name: "velocity", mask: 2})
-	if len(entity.Components) != 2 {
-		t.Errorf("Component count should be 2, but got %d", len(entity.Components))
+	if entity.Components.Len() != 2 {
+		t.Errorf("Component count should be 2, but got %d", entity.Components.Len())
 	}
 }
 
