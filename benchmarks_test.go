@@ -2,7 +2,6 @@ package ecs_test
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
 	"github.com/bolom009/ecs"
@@ -10,19 +9,19 @@ import (
 
 func BenchmarkEntityManager_Get_With_1_Entity_Id_Found(b *testing.B) {
 	m := ecs.NewEntityManager()
-	m.Add(ecs.NewEntity("foo", nil))
+	m.Add(ecs.NewEntity(nil))
 	for b.Loop() {
-		m.Get("foo")
+		m.Get(1)
 	}
 }
 
 func BenchmarkEntityManager_Get_With_1000_Entities_Id_Not_Found(b *testing.B) {
 	m := ecs.NewEntityManager()
 	for i := 0; i < 1000; i++ {
-		m.Add(ecs.NewEntity("foo", nil))
+		m.Add(ecs.NewEntity(nil))
 	}
 	for b.Loop() {
-		m.Get("1000")
+		m.Get(1000)
 	}
 }
 
@@ -30,22 +29,22 @@ func BenchmarkEntityManager_Get_With_1000_Entities_Id_Not_Found(b *testing.B) {
 func BenchmarkEntityManager_Get_With_1000_Entities_Id(b *testing.B) {
 	m := ecs.NewEntityManager()
 	for i := 0; i < 1000; i++ {
-		m.Add(ecs.NewEntity("3d78b074-dae6-419c-be63-6565375e3eba", nil))
+		m.Add(ecs.NewEntity(nil))
 	}
-	searchID := "a11efca1-e420-4869-a424-95539ce1dad7"
-	m.Add(ecs.NewEntity(searchID, nil))
+
+	m.Add(ecs.NewEntity(nil))
 
 	b.ResetTimer()
 
 	for b.Loop() {
-		m.Get(searchID)
+		m.Get(1001)
 	}
 }
 
 func BenchmarkEntityManager_FilterByMask_With_1000_Entities(b *testing.B) {
 	m := ecs.NewEntityManager()
 	for i := 0; i < 1000; i++ {
-		m.Add(ecs.NewEntity(fmt.Sprintf("%d", i), []ecs.Component{
+		m.Add(ecs.NewEntity([]ecs.Component{
 			&mockComponent{name: "position", mask: 1},
 			&mockComponent{name: "size", mask: 2},
 			&mockComponent{name: "velocity", mask: 3},
@@ -61,7 +60,7 @@ func BenchmarkEntityManager_FilterByMask_With_1000_Entities(b *testing.B) {
 }
 
 func BenchmarkEntity_Get_Should_Return_Component(b *testing.B) {
-	entity := ecs.NewEntity("e", generateComponents([]string{
+	entity := ecs.NewEntity(generateComponents([]string{
 		"position", "rotation", "scale", "material", "security",
 		"damage", "agent", "rvo", "move_speed", "aggro", "attack_speed",
 		"attack_range", "network_identity", "team", "health", "mana",
@@ -75,7 +74,7 @@ func BenchmarkEntity_Get_Should_Return_Component(b *testing.B) {
 }
 
 func BenchmarkEntity_Get_Should_Remove_Component(b *testing.B) {
-	entity := ecs.NewEntity("e", generateComponents([]string{
+	entity := ecs.NewEntity(generateComponents([]string{
 		"position", "rotation", "scale", "material", "security",
 		"damage", "agent", "rvo", "move_speed", "aggro", "attack_speed",
 		"attack_range", "network_identity", "team", "health", "mana",
@@ -134,12 +133,7 @@ func generateComponents(entries []string) []ecs.Component {
 func generateEntities(count int) []*ecs.Entity {
 	out := make([]*ecs.Entity, count)
 	for i := 0; i < count; i++ {
-		out[i] = ecs.NewEntity(
-			fmt.Sprintf("e%d", rand.Uint64()),
-			[]ecs.Component{
-				&mockComponent{mask: 1},
-			},
-		)
+		out[i] = ecs.NewEntity([]ecs.Component{&mockComponent{mask: 1}})
 	}
 	return out
 }

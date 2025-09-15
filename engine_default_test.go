@@ -67,7 +67,7 @@ func (m *mockupEntityManager) FilterByMask(mask uint64) (entities []*ecs.Entity)
 
 func (m *mockupEntityManager) FilterByNames(names ...string) (entities []*ecs.Entity) { return nil }
 
-func (m *mockupEntityManager) Get(id string) (entity *ecs.Entity) { return nil }
+func (m *mockupEntityManager) Get(id uint32) (entity *ecs.Entity) { return nil }
 
 func (m *mockupEntityManager) Remove(entity *ecs.Entity) {}
 

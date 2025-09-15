@@ -1,9 +1,13 @@
 package ecs
 
+import "sync/atomic"
+
+var idCounter atomic.Uint64
+
 // Entity is simply a composition of one or more Components with an Id.
 type Entity struct {
 	Components map[uint64]Component
-	Id         string `json:"id"`
+	Id         uint32 `json:"id"`
 	Masked     uint64 `json:"masked"`
 }
 
@@ -59,10 +63,11 @@ func (e *Entity) Remove(mask uint64) {
 }
 
 // NewEntity creates a new entity and pre-calculates the component maskSlice.
-func NewEntity(id string, components []Component) *Entity {
+func NewEntity(components []Component) *Entity {
+	eId := newId()
 	e := &Entity{
 		Components: make(map[uint64]Component),
-		Id:         id,
+		Id:         eId,
 		Masked:     maskSlice(components),
 	}
 
@@ -71,6 +76,15 @@ func NewEntity(id string, components []Component) *Entity {
 	}
 
 	return e
+}
+
+func newId() uint32 {
+	for {
+		val := idCounter.Load()
+		if idCounter.CompareAndSwap(val, val+1) {
+			return uint32(val)
+		}
+	}
 }
 
 func maskSlice(components []Component) uint64 {
