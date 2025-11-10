@@ -8,10 +8,15 @@ type defaultEntityManager struct {
 }
 
 // NewEntityManager creates a new defaultEntityManager and returns its address.
-func NewEntityManager() *defaultEntityManager {
+func NewEntityManager(cap ...int) *defaultEntityManager {
+	vCap := 100
+	if len(cap) > 0 {
+		vCap = cap[0]
+	}
+
 	return &defaultEntityManager{
 		entities:    make([]*Entity, 0),
-		mapEntities: intmap.New[uint32, *Entity](100),
+		mapEntities: intmap.New[uint32, *Entity](vCap),
 	}
 }
 
